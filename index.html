@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>BloxHours – Playtime Checker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&amp;family=Rajdhani:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#050506}
+body{display:flex;align-items:center;justify-content:center;overflow:hidden}
+#app{width:390px;height:844px;flex:none;transform-origin:center center}
+*{-webkit-tap-highlight-color:transparent}
+a{color:#FFC21A}a:hover{color:#FFD866}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+@keyframes pulse{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+@keyframes ember{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-260px);opacity:0}}
+@keyframes stripes{to{background-position:28px 0}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@keyframes blink{50%{opacity:.35}}
+.spin{animation:spin 2.4s linear infinite;transform-origin:50% 50%}
+.spinr{animation:spinr 3.6s linear infinite;transform-origin:50% 50%}
+.pulse{animation:pulse 2s ease-in-out infinite}
+.ember{position:absolute;width:4px;height:4px;border-radius:50%;background:#FF9A2E;box-shadow:0 0 8px 2px #FF7A1A;animation:ember 4s linear infinite}
+.bar{background-image:repeating-linear-gradient(-45deg,#FFC21A 0 7px,#E89A00 7px 14px);background-size:28px 100%;animation:stripes .6s linear infinite}
+.pop{animation:pop .6s ease-out both}
+.blink{animation:blink 1s step-end infinite}
+@keyframes twinkle{0%,100%{transform:scale(0) rotate(0deg);opacity:0}50%{transform:scale(1) rotate(90deg);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spark{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.rays{animation:spin 12s linear infinite}
+.tw{position:absolute;animation:twinkle 1.8s ease-in-out infinite}
+.float{animation:float 2.6s ease-in-out infinite}
+.spk{position:absolute;left:50%;top:52%;width:5px;height:5px;border-radius:50%;animation:spark 1.6s ease-out infinite}
+@keyframes rise{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-170px) scale(1);opacity:0}}
+@keyframes shard{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-12px) rotate(14deg)}}
+@keyframes halo{0%{transform:scale(.55);opacity:.9}100%{transform:scale(1.5);opacity:0}}
+@keyframes beam{0%,100%{opacity:.55}50%{opacity:1}}
+.rays2{animation:spinr 18s linear infinite}
+.mote{position:absolute;width:4px;height:4px;border-radius:50%;background:#FFF6D6;box-shadow:0 0 6px 2px rgba(255,220,120,.9);animation:rise 3.2s linear infinite}
+.shard{position:absolute;animation:shard 3s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(120,230,255,.95))}
+.halo{position:absolute;left:50%;top:50%;width:280px;height:280px;margin:-140px 0 0 -140px;border-radius:50%;border:2px solid rgba(255,230,150,.8);box-shadow:0 0 18px rgba(255,210,90,.7),inset 0 0 18px rgba(255,210,90,.5);animation:halo 2.4s ease-out infinite}
+.beam{animation:beam 2.2s ease-in-out infinite}
+.cta{transition:transform .12s ease,filter .12s ease}
+.cta:hover{filter:brightness(1.1)}
+.cta:active{transform:scale(.97)}
+.inp:focus{outline:2px solid #FFC21A;outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="app">
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; color: #F4F1EA; background: radial-gradient(120% 70% at 50% 100%, #3A1A05 0%, #120A06 45%, #050506 100%)">
+
+<div aria-hidden="true" style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,194,26,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,194,26,0.05) 1px, transparent 1px); background-size: 32px 32px"></div>
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 320px">
+<span class="ember" style="left: 8%; bottom: 10px; animation-delay: 0s"></span>
+<span class="ember" style="left: 22%; bottom: 40px; animation-delay: 1.3s"></span>
+<span class="ember" style="left: 37%; bottom: 0px; animation-delay: 2.6s"></span>
+<span class="ember" style="left: 55%; bottom: 30px; animation-delay: .7s"></span>
+<span class="ember" style="left: 68%; bottom: 5px; animation-delay: 3.1s"></span>
+<span class="ember" style="left: 81%; bottom: 50px; animation-delay: 1.9s"></span>
+<span class="ember" style="left: 93%; bottom: 15px; animation-delay: .3s"></span>
+</div>
+
+<div style="position: relative; height: 100%; display: flex; flex-direction: column; padding: 22px 24px 24px; box-sizing: border-box">
+
+<div style="display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 50;">
+<a href="https://imagetourls.com/ru/v?u=https%3A%2F%2Fcdn.imagetourls.com%2Fuploads%2FtyImg%2FOfiw4lsr.png"><img src="https://cdn.imagetourls.com/uploads/tyImg/Ofiw4lsr.png" alt="photo_2026-11-17_11-25-52.png" style="height: 60px; object-fit: contain;" /></a>
+<div style="font-size: 12px; font-weight: 700; letter-spacing: 2px; color: #FFC21A; border: 1px solid rgba(255,194,26,0.45); padding: 4px 9px; border-radius: 4px">MINI-APP</div>
+</div>
+
+<div data-if="showInput" style="display: contents">
+<div style="flex: 1; display: flex; flex-direction: column; position: relative;">
+<div style="position: absolute; left: -50px; top: 0%; z-index: 0; pointer-events: none;">
+<a href="https://imagetourls.com/ru/v?u=https%3A%2F%2Fcdn.imagetourls.com%2Fuploads%2FtyImg%2F122T5IOK7.png" style="pointer-events: auto;"><img src="https://cdn.imagetourls.com/uploads/tyImg/122T5IOK7.png" alt="garena-free-fire-max-occv251rbre15r3n.png" style="width: 220px; opacity: 0.6;" /></a>
+</div>
+<div style="height: 300px; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1;">
+<div class="pulse" aria-hidden="true" style="position: absolute; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,154,46,0.35) 0%, rgba(255,154,46,0) 70%)"></div>
+<svg width="190" height="190" viewBox="0 0 190 190" aria-hidden="true" style="position: relative">
+<g class="spinr"><circle cx="95" cy="95" r="86" fill="none" stroke="#FFC21A" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="4 10"></circle></g>
+<g class="spin"><circle cx="95" cy="95" r="72" fill="none" stroke="#FFC21A" stroke-width="5" stroke-linecap="round" stroke-dasharray="120 332"></circle></g>
+<circle cx="95" cy="95" r="52" fill="#120A06" stroke="#FF9A2E" stroke-width="2"></circle>
+<path d="M95 66 V95 L114 106" fill="none" stroke="#FFC21A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+<circle cx="95" cy="95" r="5" fill="#FFC21A"></circle>
+</svg>
+</div>
+
+<h1 style="margin: 0; font-family: 'Russo One', sans-serif; font-style: italic; font-size: 38px; line-height: 1.02; letter-spacing: 0.5px; color: #F4F1EA; position: relative; z-index: 10;">ENTER YOUR<br><span style="color: #FFC21A">PLAYER ID</span></h1>
+<p style="margin: 10px 0 22px; font-size: 17px; font-weight: 600; line-height: 1.3; color: #CFC6B8; position: relative; z-index: 10;">Type your USER ID and we'll count your diamonds bonus!</p>
+
+<div style="display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 10;">
+<label for="pid" style="font-size: 13px; font-weight: 700; letter-spacing: 2px; color: #FFC21A">USER ID</label>
+<div style="position: relative; width: 100%;">
+<input id="pid" class="inp" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 4916307582"  style="width: 100%; height: 54px; box-sizing: border-box; padding: 0 90px 0 16px; background: rgba(0,0,0,0.85); border: 1px solid rgba(255,194,26,0.5); border-radius: 6px; color: #F4F1EA; font-family: 'Rajdhani', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: 2px">
+<button type="button" id="btnPaste" class="cta" style="position: absolute; right: 6px; top: 6px; height: 42px; padding: 0 12px; background: rgba(255,194,26,0.15); border: 1px solid rgba(255,194,26,0.4); border-radius: 4px; color: #FFC21A; font-family: 'Russo One', sans-serif; font-size: 12px; cursor: pointer; letter-spacing: 1px;">PASTE</button>
+</div>
+<div data-if="err" style="display: contents">
+<div role="alert" style="font-size: 15px; font-weight: 700; color: #FF8A5C"><span data-t="err"></span></div>
+</div>
+<button type="button" id="btnGo" class="cta" style="height: 56px; border: 0; border-radius: 6px; cursor: pointer; background: linear-gradient(180deg, #FFD23F 0%, #FFB000 100%); color: #1A1003; font-family: 'Russo One', sans-serif; font-style: italic; font-size: 20px; letter-spacing: 1.5px; box-shadow: 0 0 24px rgba(255,176,0,0.45)">CONTINUE</button>
+</div>
+
+<div style="flex: 1"></div>
+</div>
+</div>
+
+<div data-if="showLoading" style="display: contents">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 34px">
+<h1 style="margin: 0; text-align: center; font-family: 'Russo One', sans-serif; font-style: italic; font-size: 30px; color: #FFC21A">COUNTING GAME HOURS</h1>
+<p style="margin: 8px 0 0; font-size: 17px; font-weight: 600; color: #CFC6B8">Please wait…</p>
+
+<div style="height: 340px; width: 100%; display: flex; align-items: center; justify-content: center; position: relative">
+<div class="pulse" aria-hidden="true" style="position: absolute; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(255,154,46,0.4) 0%, rgba(255,154,46,0) 68%)"></div>
+<svg width="250" height="250" viewBox="0 0 250 250" role="img" aria-label="Loading progress" style="position: relative">
+<g class="spinr"><circle cx="125" cy="125" r="116" fill="none" stroke="#FFC21A" stroke-opacity="0.4" stroke-width="2" stroke-dasharray="6 12"></circle></g>
+<g class="spin"><circle cx="125" cy="125" r="100" fill="none" stroke="#FF9A2E" stroke-width="3" stroke-linecap="round" stroke-dasharray="70 140"></circle></g>
+<circle cx="125" cy="125" r="80" fill="none" stroke="rgba(255,194,26,0.15)" stroke-width="12"></circle>
+<circle cx="125" cy="125" r="80" fill="none" stroke="#FFC21A" stroke-width="12" stroke-linecap="round" stroke-dasharray="502.65" id="ringProg" stroke-dashoffset="502.65" transform="rotate(-90 125 125)"></circle>
+<text x="125" y="138" text-anchor="middle" fill="#F4F1EA" font-family="Russo One, sans-serif" font-size="40" id="pctSvg">0%</text>
+</svg>
+</div>
+
+<div style="width: 100%; display: flex; flex-direction: column; gap: 8px">
+<div style="height: 18px; border: 2px solid #FFC21A; border-radius: 3px; padding: 2px; box-sizing: border-box; background: rgba(0,0,0,0.5)">
+<div class="bar" id="bar" style="height: 100%; width: 0%; border-radius: 1px"></div>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; letter-spacing: 1px">
+<span style="color: #F4F1EA"><span data-t="status"></span><span class="blink">_</span></span>
+<span style="color: #FFC21A">ID <span data-t="id"></span></span>
+</div>
+</div>
+</div>
+</div>
+
+<div data-if="showResult" style="display: contents">
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; padding-top: 29px">
+<div style="width: 100%; display: flex; align-items: center; gap: 10px">
+<div aria-hidden="true" style="flex: 1; height: 2px; background: linear-gradient(90deg, rgba(255,122,26,0), #FF7A1A)"></div>
+<h1 style="margin: 0; font-family: 'Russo One', sans-serif; font-style: italic; font-size: 30px; letter-spacing: 1px; color: #FFC21A; text-shadow: 0 0 18px rgba(255,176,0,0.55)">RESULT</h1>
+<div aria-hidden="true" style="flex: 1; height: 2px; background: linear-gradient(90deg, #FF7A1A, rgba(255,122,26,0))"></div>
+</div>
+<p style="margin: 4px 0 0; font-size: 13px; font-weight: 700; letter-spacing: 3px; color: #CFC6B8">PLAYER ID <span data-t="id"></span></p>
+
+<div class="pop" style="margin-top: 87px; width: 100%; box-sizing: border-box; position: relative; border: 2px solid #FF9A2E; border-radius: 10px; background: rgba(0,0,0,0.6); box-shadow: 0 0 36px rgba(255,122,26,0.35), inset 0 0 30px rgba(255,122,26,0.12); overflow: hidden">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-bottom: 1px solid rgba(255,194,26,0.3)">
+<div style="padding: 14px 10px 16px; text-align: center; border-right: 1px solid rgba(255,194,26,0.3)">
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #CFC6B8">GAME HOURS</div>
+<div style="margin-top: 5px; font-family: 'Russo One', sans-serif; font-size: 36px; line-height: 1; color: #F4F1EA"><span data-t="hoursText"></span></div>
+</div>
+<div style="padding: 14px 10px 16px; text-align: center; background: rgba(255,194,26,0.08)">
+<div style="font-size: 13px; font-weight: 700; letter-spacing: 1.5px; color: #FFC21A">YOUR REWARD</div>
+<div style="margin-top: 5px; font-family: 'Russo One', sans-serif; font-size: 36px; line-height: 1; color: #FFC21A"><span data-t="slicesText"></span></div>
+</div>
+</div>
+<div style="height: 340px; position: relative; display: flex; align-items: center; justify-content: center">
+<div class="beam" aria-hidden="true" style="position: absolute; left: 50%; top: 0; bottom: 0; width: 180px; margin-left: -90px; background: linear-gradient(90deg, rgba(255,230,150,0) 0%, rgba(255,236,170,0.35) 35%, rgba(255,250,230,0.55) 50%, rgba(255,236,170,0.35) 65%, rgba(255,230,150,0) 100%)"></div>
+<div class="rays" aria-hidden="true" style="position: absolute; width: 460px; height: 460px; left: 50%; top: 50%; margin: -230px 0 0 -230px; background: repeating-conic-gradient(rgba(255,240,190,0.28) 0deg 6deg, rgba(255,240,190,0) 6deg 22deg); border-radius: 50%; -webkit-mask-image: radial-gradient(circle, #000 15%, transparent 60%); mask-image: radial-gradient(circle, #000 15%, transparent 60%)"></div>
+<div class="rays2" aria-hidden="true" style="position: absolute; width: 400px; height: 400px; left: 50%; top: 50%; margin: -200px 0 0 -200px; background: repeating-conic-gradient(rgba(140,230,255,0.18) 0deg 4deg, rgba(140,230,255,0) 4deg 30deg); border-radius: 50%; -webkit-mask-image: radial-gradient(circle, #000 10%, transparent 58%); mask-image: radial-gradient(circle, #000 10%, transparent 58%)"></div>
+<div class="pulse" aria-hidden="true" style="position: absolute; width: 360px; height: 300px; left: 50%; top: 50%; margin: -150px 0 0 -180px; border-radius: 50%; background: radial-gradient(ellipse, rgba(255,250,225,0.75) 0%, rgba(255,205,80,0.45) 30%, rgba(255,160,40,0) 68%)"></div>
+<div aria-hidden="true">
+<span class="halo" style="animation-delay: 0s"></span>
+<span class="halo" style="animation-delay: 1.2s"></span>
+</div>
+<div aria-hidden="true" style="position: absolute; inset: 0">
+<span class="mote" style="left: 152px; top: 229px; animation-delay: 1.26s"></span>
+<span class="mote" style="left: 82px; top: 216px; animation-delay: 2.63s"></span>
+<span class="mote" style="left: 94px; top: 266px; animation-delay: 1.86s"></span>
+<span class="mote" style="left: 199px; top: 240px; animation-delay: 0.12s"></span>
+<span class="mote" style="left: 181px; top: 276px; animation-delay: 0.22s"></span>
+<span class="mote" style="left: 93px; top: 299px; animation-delay: 1.36s"></span>
+<span class="mote" style="left: 214px; top: 224px; animation-delay: 3.03s"></span>
+<span class="mote" style="left: 231px; top: 312px; animation-delay: 1.87s"></span>
+<span class="mote" style="left: 85px; top: 303px; animation-delay: 1.87s"></span>
+<span class="mote" style="left: 82px; top: 242px; animation-delay: 0.15s"></span>
+<span class="mote" style="left: 104px; top: 254px; animation-delay: 1.34s"></span>
+<span class="mote" style="left: 208px; top: 224px; animation-delay: 1.83s"></span>
+<span class="mote" style="left: 213px; top: 235px; animation-delay: 0.33s"></span>
+<span class="mote" style="left: 216px; top: 236px; animation-delay: 1.19s"></span>
+<span class="shard" style="left: 26px; top: 54px; animation-delay: 0s"><span style="display: block; transform: rotate(-18deg)"><svg width="16" height="27" viewBox="0 0 20 34"><defs><linearGradient id="cg0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".45" stop-color="#8FF0FF"></stop><stop offset="1" stop-color="#3A7BFF"></stop></linearGradient></defs><polygon points="10,0 20,12 10,34 0,12" fill="url(#cg0)"></polygon><polygon points="10,0 20,12 10,14" fill="rgba(255,255,255,.7)"></polygon><polygon points="0,12 10,14 10,34" fill="rgba(0,40,120,.35)"></polygon></svg></span></span>
+<span class="shard" style="left: 306px; top: 48px; animation-delay: .8s"><span style="display: block; transform: rotate(20deg)"><svg width="14" height="24" viewBox="0 0 20 34"><defs><linearGradient id="cg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".45" stop-color="#8FF0FF"></stop><stop offset="1" stop-color="#3A7BFF"></stop></linearGradient></defs><polygon points="10,0 20,12 10,34 0,12" fill="url(#cg1)"></polygon><polygon points="10,0 20,12 10,14" fill="rgba(255,255,255,.7)"></polygon><polygon points="0,12 10,14 10,34" fill="rgba(0,40,120,.35)"></polygon></svg></span></span>
+<span class="shard" style="left: 14px; top: 244px; animation-delay: 1.5s"><span style="display: block; transform: rotate(10deg)"><svg width="12" height="20" viewBox="0 0 20 34"><defs><linearGradient id="cg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".45" stop-color="#8FF0FF"></stop><stop offset="1" stop-color="#3A7BFF"></stop></linearGradient></defs><polygon points="10,0 20,12 10,34 0,12" fill="url(#cg2)"></polygon><polygon points="10,0 20,12 10,14" fill="rgba(255,255,255,.7)"></polygon><polygon points="0,12 10,14 10,34" fill="rgba(0,40,120,.35)"></polygon></svg></span></span>
+<span class="shard" style="left: 318px; top: 239px; animation-delay: .4s"><span style="display: block; transform: rotate(-12deg)"><svg width="16" height="27" viewBox="0 0 20 34"><defs><linearGradient id="cg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".45" stop-color="#8FF0FF"></stop><stop offset="1" stop-color="#3A7BFF"></stop></linearGradient></defs><polygon points="10,0 20,12 10,34 0,12" fill="url(#cg3)"></polygon><polygon points="10,0 20,12 10,14" fill="rgba(255,255,255,.7)"></polygon><polygon points="0,12 10,14 10,34" fill="rgba(0,40,120,.35)"></polygon></svg></span></span>
+<span class="shard" style="left: 116px; top: 10px; animation-delay: 1.1s"><span style="display: block; transform: rotate(-6deg)"><svg width="10" height="17" viewBox="0 0 20 34"><defs><linearGradient id="cg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".45" stop-color="#8FF0FF"></stop><stop offset="1" stop-color="#3A7BFF"></stop></linearGradient></defs><polygon points="10,0 20,12 10,34 0,12" fill="url(#cg4)"></polygon><polygon points="10,0 20,12 10,14" fill="rgba(255,255,255,.7)"></polygon><polygon points="0,12 10,14 10,34" fill="rgba(0,40,120,.35)"></polygon></svg></span></span>
+<span class="shard" style="left: 222px; top: 16px; animation-delay: 2s"><span style="display: block; transform: rotate(8deg)"><svg width="11" height="19" viewBox="0 0 20 34"><defs><linearGradient id="cg5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset=".45" stop-color="#8FF0FF"></stop><stop offset="1" stop-color="#3A7BFF"></stop></linearGradient></defs><polygon points="10,0 20,12 10,34 0,12" fill="url(#cg5)"></polygon><polygon points="10,0 20,12 10,14" fill="rgba(255,255,255,.7)"></polygon><polygon points="0,12 10,14 10,34" fill="rgba(0,40,120,.35)"></polygon></svg></span></span>
+</div>
+<div class="float" style="position: relative; filter: drop-shadow(0 0 10px rgba(255,255,230,0.9)) drop-shadow(0 0 28px rgba(255,190,40,0.8))">
+<a href="https://imagetourls.com/ru/v?u=https%3A%2F%2Fcdn.imagetourls.com%2Fuploads%2FtyImg%2FZTdlZ4IT.png"><img class="pop" src="https://cdn.imagetourls.com/uploads/tyImg/ZTdlZ4IT.png" alt="FreeFire_Guide_DiamondsGuide_EN2.png" style="position: relative; max-width: 300px; max-height: 287px;" /></a>
+</div>
+<div aria-hidden="true" style="position: absolute; inset: 0">
+<span class="tw" style="left: 60px; top: 95px; animation-delay: 0s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+<span class="tw" style="left: 262px; top: 78px; animation-delay: .7s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+<span class="tw" style="left: 232px; top: 231px; animation-delay: 1.3s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+<span class="tw" style="left: 96px; top: 242px; animation-delay: .4s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+<span class="tw" style="left: 170px; top: 54px; animation-delay: 1.6s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+<span class="tw" style="left: 300px; top: 163px; animation-delay: 1s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+<span class="tw" style="left: 30px; top: 190px; animation-delay: 1.9s; filter: drop-shadow(0 0 6px #FFE9A8)"><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 0 L13.4 10.6 L24 12 L13.4 13.4 L12 24 L10.6 13.4 L0 12 L10.6 10.6 Z" fill="#FFFFFF"></path></svg></span>
+</div>
+</div>
+</div>
+
+<div data-if="claimed" style="display: contents">
+<div class="pop" role="status" style="margin-top: 12px; width: 100%; box-sizing: border-box; padding: 10px 14px; border-radius: 6px; background: rgba(61,203,122,0.14); border: 1px solid rgba(61,203,122,0.6); text-align: center; font-size: 16px; font-weight: 700; color: #BDF5D3">Claimed! <span data-t="slicesText"></span> diamonds are on the way!</div>
+</div>
+<div data-if="notClaimed" style="display: contents">
+<p style="margin: 12px 0 0; text-align: center; font-size: 16px; font-weight: 600; line-height: 1.3; color: #CFC6B8">10 diamonds for every hour played. <span style="color: #FFC21A"><span data-t="rank"></span></span></p>
+</div>
+
+<div style="flex: 1"></div>
+<div data-if="notClaimed" style="display: contents">
+<button type="button" id="btnClaim" class="cta" style="width: 100%; height: 56px; border: 0; border-radius: 6px; cursor: pointer; background: linear-gradient(180deg, #FFD23F 0%, #FFB000 100%); color: #1A1003; font-family: 'Russo One', sans-serif; font-style: italic; font-size: 20px; letter-spacing: 1.5px; box-shadow: 0 0 24px rgba(255,176,0,0.45)">CLAIM REWARD</button>
+</div>
+<div data-if="claimed" style="display: contents">
+<button type="button" id="btnAgain" class="cta" style="width: 100%; height: 56px; border: 0; border-radius: 6px; cursor: pointer; background: linear-gradient(180deg, #FFD23F 0%, #FFB000 100%); color: #1A1003; font-family: 'Russo One', sans-serif; font-style: italic; font-size: 20px; letter-spacing: 1.5px; box-shadow: 0 0 24px rgba(255,176,0,0.45)">CHECK ANOTHER ID</button>
+</div>
+<p style="margin: 10px 0 0; text-align: center; font-size: 13px; font-weight: 600; color: #9A9184">Results are 100% made up · Just for fun</p>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<script>
+(function () {
+  var state = { screen: 'input', id: '', err: '', pct: 0, hours: 0, claimed: false };
+  var timer = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var input = $('pid');
+
+  function calc(id) {
+    var h = 2166136261;
+    for (var i = 0; i < id.length; i++) { h ^= id.charCodeAt(i); h = Math.imul(h, 16777619); }
+    h = Math.abs(h);
+    return 120 + (h % 9880);
+  }
+  function fmt(n) { return Math.round(n).toLocaleString('en-US'); }
+
+  function vals() {
+    var pct = Math.floor(state.pct), hours = state.hours, rank;
+    if (hours < 1500) rank = 'Rank: Casual.';
+    else if (hours < 6000) rank = 'Rank: Grinder.';
+    else if (hours < 13000) rank = 'Rank: No-life legend.';
+    else rank = 'Rank: Error 404 human.';
+    return {
+      showInput: state.screen === 'input',
+      showLoading: state.screen === 'loading',
+      showResult: state.screen === 'result',
+      id: state.id,
+      err: state.err,
+      pct: pct,
+      status: pct < 20 ? 'CONNECTING TO SERVERS' : pct < 45 ? 'COUNTING GAME HOURS' : pct < 70 ? 'MEASURING NO-LIFE LEVEL' : pct < 92 ? 'CHECKING GRASS CONTACT' : 'ALMOST DONE',
+      hoursText: fmt(hours),
+      slicesText: fmt(hours * 10),
+      rank: rank,
+      claimed: state.claimed,
+      notClaimed: !state.claimed
+    };
+  }
+
+  function render() {
+    var v = vals();
+    document.querySelectorAll('[data-if]').forEach(function (el) {
+      el.style.display = v[el.getAttribute('data-if')] ? 'contents' : 'none';
+    });
+    document.querySelectorAll('[data-t]').forEach(function (el) {
+      el.textContent = v[el.getAttribute('data-t')];
+    });
+    $('bar').style.width = v.pct + '%';
+    $('ringProg').setAttribute('stroke-dashoffset', (502.65 * (1 - v.pct / 100)).toFixed(1));
+    $('pctSvg').textContent = v.pct + '%';
+  }
+  function set(p) { for (var k in p) state[k] = p[k]; render(); }
+
+  function start() {
+    var id = String(input.value || '').replace(/[^0-9]/g, '').slice(0, 12);
+    if (id.length < 3) { set({ id: id, err: 'Enter a valid ID (at least 3 digits).' }); return; }
+    if (timer) clearInterval(timer);
+    set({ id: id, screen: 'loading', pct: 0, err: '', claimed: false });
+    timer = setInterval(function () {
+      var p = state.pct + Math.random() * 3 + 1.5;
+      if (p >= 100) {
+        clearInterval(timer); timer = null;
+        set({ pct: 100 });
+        setTimeout(function () { set({ screen: 'result', hours: calc(id) }); }, 600);
+      } else set({ pct: p });
+    }, 40);
+  }
+
+  input.addEventListener('input', function () {
+    var clean = input.value.replace(/[^0-9]/g, '').slice(0, 12);
+    if (clean !== input.value) input.value = clean;
+    if (state.err) set({ err: '' });
+  });
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); start(); } });
+  $('btnGo').addEventListener('click', start);
+  
+  $('btnPaste').addEventListener('click', function () {
+    // Генерируем случайный 10-значный ID
+    var randomId = Math.floor(Math.random() * 9000000000) + 1000000000;
+    input.value = String(randomId);
+    if (state.err) set({ err: '' });
+  });
+
+  $('btnClaim').addEventListener('click', function () { 
+    set({ claimed: true }); 
+    if (window.confetti) {
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#FFC21A', '#FF9A2E', '#FFFFFF', '#8FF0FF'],
+        zIndex: 9999
+      });
+    }
+  });
+  $('btnAgain').addEventListener('click', function () {
+    input.value = '';
+    set({ screen: 'input', pct: 0, id: '', hours: 0, claimed: false });
+  });
+
+  // scale the 390x844 phone layout to fit any screen
+  function fit() {
+    var k = Math.min(window.innerWidth / 390, window.innerHeight / 844);
+    $('app').style.transform = 'scale(' + k + ')';
+  }
+  window.addEventListener('resize', fit);
+  fit();
+  render();
+})();
+</script>
+</body>
+</html>
